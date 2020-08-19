@@ -1,6 +1,11 @@
-#include <iostream>
+// #include <iostream>
+#include <stdio.h>
+
+__global__ void kernel( void ) {
+}
 
 int main() {
-    std::cout << "Hello, World!" << std::endl;
+    kernel<<<1,1>>>();
+    printf("Hello World;\n");
     return 0;
 }
