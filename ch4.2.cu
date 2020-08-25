@@ -2,6 +2,9 @@
 #include <time.h>
 
 #include "./common/book.h"
+#include "./common/cpu_bitmap.h"
+
+#define DIM 1000
 
 struct cuComplex {
     float r;
@@ -16,13 +19,22 @@ struct cuComplex {
     }
 };
 
-int main(void) {
-    CPUBitmap bitmap (DIM, DIM);
-    unsigned char *ptr = bitmap.get_ptr();
+int julia( int x, int y) {
+    const float scale = 1.5;
+    float jx = scale * (float)(DIM/2 - x )/ (DIM/2);
+    float jy = scale * (float)(DIM/2 - y )/ (DIM/2);
 
-    kernel(ptr);
+    cuComplex c(0.8, 0.156);
+    cuComplex a(jx, jy);
 
-    bitmap.display_and_exit();
+    int i = 0;
+    for (i = 0; i < 200; i++){
+        a = a * a + c;
+        if (a.magnitude2() > 1000) {
+            return 0;
+        }
+    }
+    return 1;
 }
 
 void kernel( unsigned char *ptr) {
@@ -39,20 +51,12 @@ void kernel( unsigned char *ptr) {
     }
 }
 
-int julia( int x, int y) {
-    const float scale = 1.5;
-    float jx = scale * (float)(DIM/2 - x )/ (DIM/2);
-    float jy = scale * (float)(DIM/2 - y )/ (DIM/2);
+int main(void) {
+    CPUBitmap bitmap (DIM, DIM);
+    unsigned char *ptr = bitmap.get_ptr();
 
-    cuComplex c(0.8, 0.156);
-    cuComplex a(jx, jy);
+    kernel(ptr);
 
-    int i = 0;
-    for (i = 0; i < 200; i++){
-        a = a * a + c;
-        if (a.magnitude > 1000) {
-            return 0;
-        }
-    }
-    return 1;
+    bitmap.display_and_exit();
 }
+
