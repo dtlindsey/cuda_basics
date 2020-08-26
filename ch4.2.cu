@@ -4,7 +4,7 @@
 #include "./common/book.h"
 #include "./common/cpu_bitmap.h"
 
-#define DIM 2048
+#define DIM 1000
 
 struct cuComplex {
     float r;
@@ -24,11 +24,11 @@ int julia( int x, int y) {
     float jx = scale * (((float)DIM/2 - x )/ (DIM/2));
     float jy = scale * (((float)DIM/2 - y )/ (DIM/2));
 //    printf("jx:%f, jy:%f\n",jx, jy);
-    cuComplex c(-0.8, 0.156);
+    cuComplex c(-0.8, 0.156); //c(-0.8, 0.156);
     cuComplex a(jx, jy);
 
     int i = 0;
-    for (i = 0; i < 200; i++){
+    for (i = 0; i < 350; i++){
         a = a * a + c;
         if (a.magnitude2() > DIM) {
             return 0;
@@ -41,11 +41,11 @@ void kernel( unsigned char *ptr) {
     for (int y=0; y < DIM; y++) {
         for (int x=0; x < DIM; x++) {
             int offset = x + y * DIM;
-            int juliaValue = julia(x, y);
+            int juliaValue = julia(y, x);
 //            printf("juliaVal:%d\n",juliaValue);
             ptr[offset * 4 + 0] = 255 * juliaValue;
             ptr[offset * 4 + 1] = 0;
-            ptr[offset * 4 + 2] = 0;
+            ptr[offset * 4 + 2] = 255 * juliaValue;
             ptr[offset * 4 + 3] = 255;
         }
     }
