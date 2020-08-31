@@ -1,29 +1,52 @@
-// #include <iostream>
 #include <stdio.h>
+#include <cuda.h>
 
 #include "./common/book.h"
 
-__global__ void add( int a, int b, int *c ) {
-    *c = a + b;
+
+#include <iostream>
+#include <math.h>
+// Kernel function to add the elements of two arrays
+__global__
+void add(int n, float *x, float *y)
+{
+    for (int i = 0; i < n; i++)
+        y[i] = x[i] + y[i];
 }
 
-int main( void ) {
-    cudaDeviceProp prop;
-    int device;
+int main(void)
+{
+    int N = 20;
+    float *x, *y;
 
-    HANDLE_ERROR(cudaGetDevice(&device));
-    printf("ID of current device: %d\n", device);
+    // Allocate Unified Memory – accessible from CPU or GPU
+    cudaMallocManaged(&x, N*sizeof(float));
+    cudaMallocManaged(&y, N*sizeof(float));
 
-    memset(&prop, 0, sizeof(cudaDeviceProp));
+    // initialize x and y arrays on the host
+    for (int i = 0; i < N; i++) {
+        x[i] = (float)i;
+        y[i] = (float)i + (float)i ;
+    }
 
-    prop.major = 7;
-    prop.minor = 1;
+    // Run kernel on 1M elements on the GPU
+    add<<<1, 1>>>(N, x, y);
+    cudaError_t err = cudaGetLastError();
+    if (err != cudaSuccess)
+        printf("Error running data: %s\n", cudaGetErrorString(err));
 
-    HANDLE_ERROR(cudaChooseDevice(&device, &prop));
+    // Wait for GPU to finish before accessing on host
+    cudaDeviceSynchronize();
 
-    printf("ID of device with revisions of data 7.1 or above: %d\n", device);
+    // Check for errors (all values should be 3.0f)
+    float maxError = 0.0f;
+    for (int i = 0; i < N; i++)
+//        maxError = fmax(maxError, fabs(y[i]-3.0f));
+        std::cout << "data " << i << ":  val: " << y[i] << std::endl;
 
-    HANDLE_ERROR(cudaSetDevice(device));
+    // Free memory
+    cudaFree(x);
+    cudaFree(y);
 
     return 0;
 }
