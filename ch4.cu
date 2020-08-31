@@ -9,8 +9,8 @@
 __global__ void add(int *a, int *b, int *c) {
     int t_id = blockIdx.x;
     if (t_id < NUM_THREADS) {
-        printf("GPU %d * %d = %d",a[t_id], b[t_id], c[t_id]);
         c[t_id] = a[t_id] * b[t_id];
+        printf("GPU %d * %d = %d\n",a[t_id], b[t_id], c[t_id]);
     }
 }
 
