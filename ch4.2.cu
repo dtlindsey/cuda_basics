@@ -21,23 +21,6 @@ struct cuComplex {
     }
 };
 
-//int julia( int x, int y) {
-//    const float scale = 1.5;
-//    float jx = scale * (((float)DIM/2 - x )/ (DIM/2));
-//    float jy = scale * (((float)DIM/2 - y )/ (DIM/2));
-////    printf("jx:%f, jy:%f\n",jx, jy);
-//    cuComplex c(-0.8, 0.156); //c(-0.8, 0.156);
-//    cuComplex a(jx, jy);
-//
-//    int i = 0;
-//    for (i = 0; i < 350; i++){
-//        a = a * a + c;
-//        if (a.magnitude2() > DIM) {
-//            return 0;
-//        }
-//    }
-//    return 1;
-//}
 
 __device__ int julia(int x, int y) {
     const float scale = 1.5;
@@ -64,24 +47,10 @@ __global__ void kernel (unsigned char *ptr) {
     //
     int juliaValue = julia(y, x);
     ptr[offset * 4 + 0] = 255 * juliaValue;
-    ptr[offset * 4 + 1] = 0;
+    ptr[offset * 4 + 1] = 255 * juliaValue;
     ptr[offset * 4 + 2] = 0;
     ptr[offset * 4 + 3] = 255;
 }
-
-//void kernel( unsigned char *ptr) {
-//    for (int y=0; y < DIM; y++) {
-//        for (int x=0; x < DIM; x++) {
-//            int offset = x + y * DIM;
-//            int juliaValue = julia(y, x);
-////            printf("juliaVal:%d\n",juliaValue);
-//            ptr[offset * 4 + 0] = 255 * juliaValue;
-//            ptr[offset * 4 + 1] = 0;
-//            ptr[offset * 4 + 2] = 255 * juliaValue;
-//            ptr[offset * 4 + 3] = 255;
-//        }
-//    }
-//}
 
 struct DataBlock {
     unsigned  char *dev_bitmap;
@@ -93,7 +62,7 @@ int main(void) {
 //    unsigned char *ptr = bitmap.get_ptr();
     unsigned char *dev_bitmap;
 
-    cudaError_t did_init = cudaMalloc( (void**) &dev_bitmap, (DIM * DIM * sizeof(char)));
+    cudaError_t did_init = cudaMalloc( (void**) &dev_bitmap,bitmap.image_size());
     if(did_init != cudaSuccess) {
         printf("Data didn't get initialized\n");
         return 1;
