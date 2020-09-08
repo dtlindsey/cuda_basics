@@ -2,10 +2,10 @@
 
 #include "./common/book.h"
 
-#define N 10
+#define N 10000
 
 __global__ void add(int *a, int *b, int *c) {
-    int tid = threadIdx.x;
+    int tid = threadIdx.x + blockIdx.x * blockDim.x;
     if (tid < N) {
         c[tid] = a[tid] + b[tid];
     }
@@ -37,7 +37,7 @@ int main(void) {
                            cudaMemcpyHostToDevice),
                 "cudaMemcpy dev_b", 34);
 
-    add<<<1,N>>>(dev_a, dev_b, dev_c);
+    add<<<(N + 127)/128,128>>>(dev_a, dev_b, dev_c);
 
     // copy result back to host
     HandleError(cudaMemcpy(c,
