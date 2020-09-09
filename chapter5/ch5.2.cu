@@ -49,7 +49,12 @@ int main(void) {
 
     // display results
     for (int i=0; i < N; ++i) {
-        printf("%d + %d = %d\n", a[i], b[i], c[i]);
+        if (a[i] + b[i] == c[i]) {
+            printf("%d + %d = %d\n", a[i], b[i], c[i]);
+        }
+        else {
+            printf("%d + %d != %d\n", a[i],b[i],c[i]);
+        }
     }
 
     HandleError(cudaFree(dev_a), "cudaFree dev_a", 54);
