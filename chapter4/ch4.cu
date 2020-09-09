@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <time.h>
 
-#include "./common/book.h"
+#include "../common/book.h"
 
 #define NUM_THREADS 10
 

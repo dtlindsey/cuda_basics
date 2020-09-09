@@ -5,14 +5,11 @@ find_package(CUDA)
 set(CMAKE_CUDA_STANDARD 11)
 set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -gencode arch=compute_50,code=sm_50")
 
+# first app
 add_executable(cu_main main.cu)
-
-add_executable(cu_ch4 ch4.cu)
-
-link_directories(./lib)
-add_executable(cu_julia ch4.2.cu)
-target_link_libraries(cu_julia glut64)
-
+# chapter 4
+add_subdirectory(chapter4)
 # chapter 5
-add_executable(threaded_add ch5.2.cu)
+add_subdirectory(chapter5)
+
 
