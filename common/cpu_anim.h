@@ -20,6 +20,7 @@
 #include "gl_helper.h"
 
 #include <iostream>
+#include <stdio.h>
 
 
 struct CPUAnimBitmap {
@@ -30,6 +31,7 @@ struct CPUAnimBitmap {
     void (*animExit)(void*);
     void (*clickDrag)(void*,int,int,int,int);
     int     dragStartX, dragStartY;
+    int mainWindow;
 
     CPUAnimBitmap( int w, int h, void *d = NULL ) {
         width = w;
@@ -62,11 +64,12 @@ struct CPUAnimBitmap {
         glutInit( &c, &dummy );
         glutInitDisplayMode( GLUT_DOUBLE | GLUT_RGBA );
         glutInitWindowSize( width, height );
-        glutCreateWindow( "bitmap" );
+        mainWindow = glutCreateWindow( "bitmap" );
         glutKeyboardFunc(Key);
         glutDisplayFunc(Draw);
         if (clickDrag != NULL)
             glutMouseFunc( mouse_func );
+        glutSetWindow(mainWindow);
         glutIdleFunc( idle_func );
         glutMainLoop();
     }

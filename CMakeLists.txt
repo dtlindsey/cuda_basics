@@ -3,7 +3,7 @@ project(cuda_test LANGUAGES CUDA)
 
 find_package(CUDA)
 set(CMAKE_CUDA_STANDARD 11)
-set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -gencode arch=compute_50,code=sm_50")
+set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -gencode arch=compute_50,code=sm_50 -lcudart")
 
 # first app
 add_executable(cu_main main.cu)
