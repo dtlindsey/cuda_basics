@@ -1,5 +1,11 @@
 #include <stdio.h>
 
+#include "cuda_runtime.h"
+#include "device_launch_parameters.h"
+#include <cuda.h>
+#include <device_functions.h>
+#include <cuda_runtime_api.h>
+
 #include "../common/book.h"
 
 #define imin(a, b) (a<b ? a:b)
@@ -23,7 +29,7 @@ __global__ void dot(float *a, float *b, float *c) {
     cache[cacheIndex] = temp;
 
     // sync threads
-    __syncthreads_and(0);
+    __syncthreads_and(1);
 
     // for reduction threadsPerBlock must be power of two
     int i = blockDim.x / 2;
@@ -31,7 +37,7 @@ __global__ void dot(float *a, float *b, float *c) {
         if (cacheIndex < i) {
             cache[cacheIndex] += cache[cacheIndex + i];
         }
-        __syncthreads_and(0);
+        __syncthreads_and(1);
         i /= 2;
     }
     if (cacheIndex == 0) {
