@@ -19,7 +19,7 @@ __global__ void dot(float *a, float *b, float *c) {
     __shared__ float cache[threadsPerBlock];
     int tid = threadIdx.x + blockIdx.x * blockDim.x;
     int cacheIndex = threadIdx.x;
-
+    printf("printing from GPU\n");
     float temp = 0;
     while (tid < N) {
         temp += a[tid] * b[tid];
